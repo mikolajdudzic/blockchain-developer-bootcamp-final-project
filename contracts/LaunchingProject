@@ -1,0 +1,43 @@
+pragma solidity >=0.7.0 <0.9.0;
+
+contract LaunchingProject {
+
+  //State variables
+  address[] public payable investors;
+
+  uint allocation;
+  uint currentPool;
+  uint maxPool;
+
+  address owner;
+
+  constructor() {
+      owner = msg.sender;
+  }
+
+  //Events
+
+
+  //Enums
+
+  //Modifiers
+  modifier onlyOwner() {
+      require(msg.sender == owner);
+      _;
+  }
+  //Functions
+  function setMaxAllocation(uint _maxPool) {
+      maxPool = _maxPool;
+  }
+
+  function transferFundsIn(uint _allocation, address payable _investor) public payable {
+      require(pool + _allocation <= maxPool);
+      pool += _allocation;
+      investors.push(_inverstor);
+  }
+
+  function transferFundsOut(uint _pool) public payable onlyOwner {
+      //Program has to make sure that caller of this function is owner of the contract
+  }
+
+}
