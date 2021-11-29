@@ -3,29 +3,23 @@ pragma solidity ^0.8.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
-contract LauchpadDeal is Ownable {
+
+contract LaunchpadDeal is Ownable {
 
   // State variables
   address[] public investors;
 
-  uint maxPool;
-  uint maxPoolPerUser;
-  uint currentPool;
-  IERC20 usdt = IERC20(0x110a13FC3efE6A245B50102D2d79B3E76125Ae83);
-  IERC20 paymentToken = usdt;
-  
+  uint256 maxPool; // max limit of investors contribution
+  uint256 maxPoolPerUser; // max contribution for 1 investor
+  uint256 minPoolPerUser; // min contribution for 1 investor
+  uint256 currentPool; // current number of raised money
+  IERC20 public paymentToken; //
+
   
   struct investorStruct {
-    uint pool;
-    bool isPaid;
+    uint pool; // Users overall contribution.
     bool isPaidFull;
-  }
-
-  constructor() {
-    maxPool = 1000;
-    maxPoolPerUser = 200;
   }
 
 
@@ -33,67 +27,88 @@ contract LauchpadDeal is Ownable {
 
   mapping(address => investorStruct) private investorStructMapping;
 
-  mapping(address => address) public tokenPriceFeedMapping;
-
+  
   // Events
   
-  event getAnInvestor(address _investor, uint _amount);
+  event GetAnInvestor(address _investor, uint256 _amount);
+  
+  event UserPaid(address _investor, uint256 _amount);
 
-  event userPaid(address _user, uint _amount);
+  event OwnerReceivedFunds(address _owner, address _from, uint256 _amount);
 
-  event ownerReceivedFunds(address _owner, address _from, uint _amount);
-
+  
   // Modifiers
 
   modifier UserCanPay(uint256 _amount) {
-    require(investorStructMapping[msg.sender].isPaid != true, "You already paid for this campaign.");
-    require(currentPool + _amount <= maxPool, "Try to buy for less ether.");
-    require(_amount >= 10, "Your payment must be equal or higher than 10 USDT");
-    require(_amount <= maxPoolPerUser, "Your allocation is lower.");
+    uint256 formatedAmount = formatValue(_amount); 
+    // Check whether user has the payment token in his wallet in the first place.
+    require(paymentToken.balanceOf(msg.sender) > 0);
+    // Checks whether user already paid for this campaign. 
+    require(investorStructMapping[msg.sender].isPaidFull != true, "You already paid for this campaign.");
+    // Checks whether the amount fits in max limit.
+    require(currentPool + formatedAmount <= maxPool, "Try to buy for less money.");
+    // Checks if the user provided enough contribution.
+    require(formatedAmount >= minPoolPerUser, "Your payment must be equal or higher than 5 USDT");
+    // Makes sure user cant buy more than max limit.
+    require(formatedAmount <= maxPoolPerUser, "Your allocation is lower.");
     _;
   }
+  
+  modifier isAnInvestor() {
+    for (uint i = 0; i < investors.length; i++) {
+      if (investors[i] == msg.sender) {
+        _;
+      }
+    }
+    revert("You are not an investor!");
+  }
+
 
   // Functions
 
-  function setPriceFeedContract(address _token, address _priceFeed) public onlyOwner {
-    tokenPriceFeedMapping[_token] = _priceFeed;
+  function setParameters(uint256 _maxPool, uint256 _maxPoolPerUser, uint256 _minPoolPerUser, address _pToken) external onlyOwner {
+    maxPool = formatValue(_maxPool);
+    maxPoolPerUser = formatValue(_maxPoolPerUser);
+    minPoolPerUser = formatValue(_minPoolPerUser);
+    paymentToken = IERC20(_pToken); // PToken 
   }
 
-  function getTokenValue(address _token) public view returns(uint256, uint256) {
-    address priceFeedAddress = tokenPriceFeedMapping[_token];
-    AggregatorV3Interface priceFeed = AggregatorV3Interface(priceFeedAddress);
-    (,int256 price,,,) = priceFeed.latestRoundData();
-    uint256 decimals = priceFeed.decimals();
-    return (uint256(price), decimals);
+  function formatValue(uint256 _amount) public pure returns(uint) {
+    uint256 currentFormatedValue = _amount * 10**18;
+    return currentFormatedValue;
   }
-
-  function getUserPaymentTokenValue(address _user) public view returns(uint256) {
-    (uint256 price, uint256 decimals) = getTokenValue(address(paymentToken));
-    return (paymentToken.balanceOf(_user) * price / (10**decimals));
-    }
-
-  function payForDeal(uint256 _amount) external payable UserCanPay(_amount) {
+  
+  // Function transfers payment token from users address to the owners one. 
+  function payForDeal(uint256 _amount) public UserCanPay(_amount) {
     address investor = msg.sender;
-    paymentToken.transferFrom(msg.sender, Ownable.owner(), _amount); 
-    emit userPaid(investor, _amount);
+    uint256 formatedAmount = formatValue(_amount);
+
+    paymentToken.transferFrom(investor, Ownable.owner(), formatedAmount);
+
+    // 
+    emit UserPaid(investor, _amount);
+
+    // Contract adds user to the "investors" array
     investors.push(investor);
-    currentPool += _amount;
-    uint index = investors.length - 1;
-    investorStructMapping[investors[index]].pool = _amount;
-    investorStructMapping[investors[index]].isPaid = true;
-    if (_amount == maxPoolPerUser) {
+    currentPool += formatedAmount;
+    uint256 index = investors.length - 1;
+    investorStructMapping[investors[index]].pool = formatedAmount;
+    if (formatedAmount == maxPoolPerUser) {
       investorStructMapping[investors[index]].isPaidFull = true;
     }
   }
 
-  function getInvestors() public {
+  function getInvestors() external onlyOwner {
     for (uint i = 0; i < investors.length; i++) {
-      emit getAnInvestor(investors[i], investorStructMapping[investors[i]].pool);
+      emit GetAnInvestor(investors[i], investorStructMapping[investors[i]].pool);
     }
   }
 
-  function getCurrentPool() public view returns(uint) {
+  function getCurrentPool() external view returns(uint) {
     return currentPool;
   }
+
+  function getBalance(address _address) public view returns(uint) {
+    return paymentToken.balanceOf(_address);
+  }
 }
-  
