@@ -1,9 +1,23 @@
-
-import Web3 from '../node_modules/web3';
-
 console.log("Welcome in the RopstenPad!")
 
-const web3 = new web3(window.ethereum);
+
+
+window.addEventListener("load", function() {
+	if (typeof window.ethereum !== "undefined") {
+
+		console.log("MetaMask detected!")
+		let mmDetected = document.getElementById("mm-detected")
+		//mmDetected.innerHTML = "MetaMask has been detected"
+		var web3 = new Web3(window.ethereum);
+
+
+	} else {
+		console.log("Theres no Wallet available :(")
+		alert("You need to install MetaMask Extension")
+	}
+})
+
+const web3 = new Web3(window.ethereum);
 
 const LaunchpadDealABI = [
 	{
@@ -253,7 +267,7 @@ const LaunchpadDealABI = [
 		"type": "function"
 	}
 ]
-const LaunchpadDealAddress = 0xd30233A60e614273c0f310c2C30439Cc9F1B6688;
+const LaunchpadDealAddress = "0xd30233A60e614273c0f310c2C30439Cc9F1B6688";
 
 const usdtABI = [
 	{
@@ -420,42 +434,50 @@ const usdtABI = [
 	}
 ]
 
-const usdt = web3.eth.Contract(usdtABI, 0x110a13FC3efE6A245B50102D2d79B3E76125Ae83);
-const LaunchpadDeal = web3.eth.Contract(LaunchpadDealABI, LaunchpadDealAddress);
-
-
-window.addEventListener("load", function() {
-	if (typeof window.ethereum !== "undefined") {
-
-		console.log("MetaMask detected!")
-		let mmDetected = document.getElementById("mm-detected")
-		//mmDetected.innerHTML = "MetaMask has been detected"
-
-
-	} else {
-		console.log("Theres no Wallet available :(")
-		alert("You need to install MetaMask Extension")
-	}
-})
-
 const mmEnable = document.getElementById("mm-Connect");
 
 mmEnable.onclick = async () => {
-	await ethereum.request({ method: 'eth_requestAccounts'})
+	await ethereum.request({ method: "eth_requestAccounts" });
+	var mmCurrentAccount = document.getElementById("mm-current-account");
+  mmCurrentAccount.innerHTML = 
+    "Connected with address: " + ethereum.selectedAddress;
 }
 
-const approve = document.getElementById("approveButton");
-const pay = document.getElementById("payButton");
-const amount = document.getElementById("value");
+const pay = document.getElementById("pay");
 
+var amount;
 
+window.addEventListener("load", function() {
+  document.getElementById('payment').addEventListener("submit", function(e) {
+    e.preventDefault(); // before the code
+    
+		amount = document.getElementById("pay"); // potem robie sobie co chce z ta zmienna?
 
-approve.onclick = async () => {
-	await usdt.methods.approve(LaunchpadDealAddress, amount);
-}
+    // Should be triggered on form submit
+    console.log('hi');
+  })
+});
 
-pay.onclick = async () => {
-	await LaunchpadDeal.methods.payForDeal(amount).send();
-}
+// pay.onclick = async () => {
+// 	await ethereum.request({ method: "eth_requestAccounts" });
+
+// 	var web3 = new Web3(window.ethereum);
+
+// 	var usdt = new web3.eth.Contract(usdtABI, "0x110a13FC3efE6A245B50102D2d79B3E76125Ae83");
+// 	var LaunchpadDeal = new web3.eth.Contract(LaunchpadDealABI, LaunchpadDealAddress);
+// 	usdt.setProvider(window.ethereum);
+// 	LaunchpadDeal.setProvider(window.ethereum);
+
+// 	await LaunchpadDeal.methods
+// 		.payForDeal(amount)
+// 		.send({
+// 			from: ethereum.selectedAddress,
+// 			value: web3.utils.toBN(amount),
+// 		})
+// 		// .on("receipt", async function (receipt) {
+// 		// 	let betsCount = await betFactory.methods.getBetsCount().call();
+
+// 			alert(`Paid successfully!`);
+// 		};
 
 
