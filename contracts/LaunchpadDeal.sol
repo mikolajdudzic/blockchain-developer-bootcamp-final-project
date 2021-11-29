@@ -1,24 +1,38 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.0;
 
+//@title Funding a promising project
+//@author Mikolaj Dudzic
+//@notice Contract was not build for commercial use.
+
+
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 
 contract LaunchpadDeal is Ownable {
 
-  // State variables
-  address[] public investors;
+  //@notice State variables
 
-  uint256 maxPool; // max limit of investors contribution
-  uint256 maxPoolPerUser; // max contribution for 1 investor
-  uint256 minPoolPerUser; // min contribution for 1 investor
-  uint256 currentPool; // current number of raised money
-  IERC20 public paymentToken; //
+  //@notice array of investors
+  address[] public investors;
+  //@notice max limit of investors contribution
+  uint256 maxPool;
+  //@notice max contribution for 1 investor
+  uint256 maxPoolPerUser;
+  //@notice min contribution for 1 investor
+  uint256 minPoolPerUser;
+  //@notice current number of raised money
+  uint256 currentPool;
+  //@notice erc20 token which will be used for payments
+  IERC20 public paymentToken;
+  //@notice
+  uint256 tokenDecimals;
 
   
   struct investorStruct {
-    uint pool; // Users overall contribution.
+    //@notice Users overall contribution.
+    uint pool;
     bool isPaidFull;
   }
 
@@ -37,8 +51,10 @@ contract LaunchpadDeal is Ownable {
   event OwnerReceivedFunds(address _owner, address _from, uint256 _amount);
 
   
-  // Modifiers
+  //@notice Modifiers
 
+  //@notice modifier checks if user is aligible to pay for deal
+  //@param the amount that user wants to pay
   modifier UserCanPay(uint256 _amount) {
     uint256 formatedAmount = formatValue(_amount); 
     // Check whether user has the payment token in his wallet in the first place.
@@ -54,6 +70,7 @@ contract LaunchpadDeal is Ownable {
     _;
   }
   
+  //@notice modifier check if caller of the function is an investor
   modifier isAnInvestor() {
     for (uint i = 0; i < investors.length; i++) {
       if (investors[i] == msg.sender) {
@@ -66,19 +83,22 @@ contract LaunchpadDeal is Ownable {
 
   // Functions
 
-  function setParameters(uint256 _maxPool, uint256 _maxPoolPerUser, uint256 _minPoolPerUser, address _pToken) external onlyOwner {
+  //@notice Owner of the contract can set deal parameters after deploying the contract
+  function setParameters(uint256 _maxPool, uint256 _maxPoolPerUser, uint256 _minPoolPerUser, address _pToken, uint256 _tokenDecimals) external onlyOwner {
     maxPool = formatValue(_maxPool);
     maxPoolPerUser = formatValue(_maxPoolPerUser);
     minPoolPerUser = formatValue(_minPoolPerUser);
-    paymentToken = IERC20(_pToken); // PToken 
+    paymentToken = IERC20(_pToken);
+    tokenDecimals = _tokenDecimals;
   }
 
-  function formatValue(uint256 _amount) public pure returns(uint) {
-    uint256 currentFormatedValue = _amount * 10**18;
+  //@notice function format the value provide by a user to value with 18 zeros to match the solidity format
+  function formatValue(uint256 _amount) public view returns(uint) {
+    uint256 currentFormatedValue = _amount * 10**tokenDecimals;
     return currentFormatedValue;
   }
   
-  // Function transfers payment token from users address to the owners one. 
+  //@notice transfers payment token from users address to the owners one. 
   function payForDeal(uint256 _amount) public UserCanPay(_amount) {
     address investor = msg.sender;
     uint256 formatedAmount = formatValue(_amount);
@@ -88,7 +108,7 @@ contract LaunchpadDeal is Ownable {
     // 
     emit UserPaid(investor, _amount);
 
-    // Contract adds user to the "investors" array
+    //@notice Contract adds user to the "investors" array
     investors.push(investor);
     currentPool += formatedAmount;
     uint256 index = investors.length - 1;
@@ -98,16 +118,19 @@ contract LaunchpadDeal is Ownable {
     }
   }
 
+  //@notice returns a list of investors addresses and its pools emitting the GetAnInvestor event 
   function getInvestors() external onlyOwner {
     for (uint i = 0; i < investors.length; i++) {
       emit GetAnInvestor(investors[i], investorStructMapping[investors[i]].pool);
     }
   }
 
+  //@notice returns a current status of investors contribution
   function getCurrentPool() external view returns(uint) {
     return currentPool;
   }
 
+  //@notice returns a balance of some ERC20 token on provided address
   function getBalance(address _address) public view returns(uint) {
     return paymentToken.balanceOf(_address);
   }
