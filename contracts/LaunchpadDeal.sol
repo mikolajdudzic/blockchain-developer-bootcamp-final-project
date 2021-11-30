@@ -26,8 +26,6 @@ contract LaunchpadDeal is Ownable {
   uint256 currentPool;
   //@notice erc20 token which will be used for payments
   IERC20 public paymentToken;
-  //@notice
-  uint256 tokenDecimals;
 
   
   struct investorStruct {
@@ -56,17 +54,16 @@ contract LaunchpadDeal is Ownable {
   //@notice modifier checks if user is aligible to pay for deal
   //@param the amount that user wants to pay
   modifier UserCanPay(uint256 _amount) {
-    uint256 formatedAmount = formatValue(_amount); 
     // Check whether user has the payment token in his wallet in the first place.
     require(paymentToken.balanceOf(msg.sender) > 0);
     // Checks whether user already paid for this campaign. 
     require(investorStructMapping[msg.sender].isPaidFull != true, "You already paid for this campaign.");
     // Checks whether the amount fits in max limit.
-    require(currentPool + formatedAmount <= maxPool, "Try to buy for less money.");
+    require(currentPool + _amount <= maxPool, "Try to buy for less money.");
     // Checks if the user provided enough contribution.
-    require(formatedAmount >= minPoolPerUser, "Your payment must be equal or higher than 10 pToken");
+    require(_amount >= minPoolPerUser, "Your payment must be equal or higher than 10 pToken");
     // Makes sure user cant buy more than max limit.
-    require(formatedAmount <= maxPoolPerUser, "Your allocation is lower.");
+    require(_amount <= maxPoolPerUser, "Your allocation is lower.");
     _;
   }
   
@@ -84,37 +81,27 @@ contract LaunchpadDeal is Ownable {
   // Functions
 
   //@notice Owner of the contract can set deal parameters after deploying the contract
-  function setParameters(uint256 _maxPool, uint256 _maxPoolPerUser, uint256 _minPoolPerUser, address _pToken, uint256 _tokenDecimals) external onlyOwner {
-    maxPool = formatValue(_maxPool);
-    maxPoolPerUser = formatValue(_maxPoolPerUser);
-    minPoolPerUser = formatValue(_minPoolPerUser);
+  function setParameters(uint256 _maxPool, uint256 _maxPoolPerUser, uint256 _minPoolPerUser, address _pToken) external onlyOwner {
+    maxPool = _maxPool;
+    maxPoolPerUser = _maxPoolPerUser;
+    minPoolPerUser = _minPoolPerUser;
     paymentToken = IERC20(_pToken);
-    tokenDecimals = _tokenDecimals;
     currentPool = 0;
-  }
-
-  //@notice function format the value provide by a user to value with 18 zeros to match the solidity format
-  function formatValue(uint256 _amount) public view returns(uint) {
-    uint256 currentFormatedValue = _amount * 10**tokenDecimals;
-    return currentFormatedValue;
   }
   
   //@notice transfers payment token from users address to the owners one. 
   function payForDeal(uint256 _amount) public UserCanPay(_amount) {
     address investor = msg.sender;
-    uint256 formatedAmount = formatValue(_amount);
 
-    paymentToken.transferFrom(investor, Ownable.owner(), formatedAmount);
-
-    // 
+    paymentToken.transferFrom(investor, Ownable.owner(), _amount);
     emit UserPaid(investor, _amount);
 
     //@notice Contract adds user to the "investors" array
     investors.push(investor);
-    currentPool += formatedAmount;
+    currentPool += _amount;
     uint256 index = investors.length - 1;
-    investorStructMapping[investors[index]].pool = formatedAmount;
-    if (formatedAmount == maxPoolPerUser) {
+    investorStructMapping[investors[index]].pool = _amount;
+    if (_amount == maxPoolPerUser) {
       investorStructMapping[investors[index]].isPaidFull = true;
     }
   }
@@ -135,8 +122,7 @@ contract LaunchpadDeal is Ownable {
   function getBalance(address _address) public view returns(uint) {
     return paymentToken.balanceOf(_address);
   }
-
-
+  
   //@notice this function is for test purposes only.
   function getNum(uint256 _amount) external view UserCanPay(_amount) returns(uint) {
     return _amount;
