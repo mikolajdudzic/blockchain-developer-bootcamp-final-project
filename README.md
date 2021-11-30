@@ -4,15 +4,17 @@ The final project to complete Blockchain Developer Bootcamp 2021!
 **Launchpad which will allow a user to buy token allocations in early stage crypto projects.**
 
 
-You can access my project here ->> ...
+You can access my project here ->> **https://mikolajdudzic.github.io/blockchain-developer-bootcamp-final-project/**
 
-Walkthrough video url ->> ..
+Walkthrough video url ->> **https://youtu.be/0ALApQdJ0I4**
 
 Public Ethereum wallet for NFT certificate ->> **0xcf74F7f45999f45992E4e2f6AA3354bE01049b82**
 
 
 Installation steps:
-s
+
+Project require instalation on truffle ->> npm install truffle
+and Ganache ->> https://www.trufflesuite.com/ganache
 
 1. Run the **npm install** command to install all dependecies.
 2. Run the **truffle compile** command to compile the contract source code files.
