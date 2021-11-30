@@ -1,6 +1,19 @@
 console.log("Welcome in the RopstenPad!")
 
+let truncate = function (fullStr, strLen, separator) {
+    if (fullStr.length <= strLen) return fullStr;
 
+    separator = separator || '...';
+
+    let sepLen = separator.length,
+        charsToShow = strLen - sepLen,
+        frontChars = Math.ceil(charsToShow/2),
+        backChars = Math.floor(charsToShow/2);
+
+    return fullStr.substr(0, frontChars) + 
+           separator + 
+           fullStr.substr(fullStr.length - backChars);
+};
 
 window.addEventListener("load", function() {
 	if (typeof window.ethereum !== "undefined") {
@@ -8,7 +21,7 @@ window.addEventListener("load", function() {
 		console.log("MetaMask detected!")
 		let mmDetected = document.getElementById("mm-detected")
 		//mmDetected.innerHTML = "MetaMask has been detected"
-		var web3 = new Web3(window.ethereum);
+		//let web3 = new Web3(window.ethereum);
 
 
 	} else {
@@ -38,6 +51,13 @@ const LaunchpadDealABI = [
 		],
 		"name": "GetAnInvestor",
 		"type": "event"
+	},
+	{
+		"inputs": [],
+		"name": "getInvestors",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -84,6 +104,72 @@ const LaunchpadDealABI = [
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "payForDeal",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_maxPool",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_maxPoolPerUser",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_minPoolPerUser",
+				"type": "uint256"
+			},
+			{
+				"internalType": "address",
+				"name": "_pToken",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_tokenDecimals",
+				"type": "uint256"
+			}
+		],
+		"name": "setParameters",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -118,7 +204,7 @@ const LaunchpadDealABI = [
 				"type": "uint256"
 			}
 		],
-		"stateMutability": "pure",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -154,10 +240,22 @@ const LaunchpadDealABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "getInvestors",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
+			}
+		],
+		"name": "getNum",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -193,19 +291,6 @@ const LaunchpadDealABI = [
 		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "payForDeal",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"inputs": [],
 		"name": "paymentToken",
 		"outputs": [
@@ -217,230 +302,301 @@ const LaunchpadDealABI = [
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "renounceOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_maxPool",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_maxPoolPerUser",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_minPoolPerUser",
-				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "_pToken",
-				"type": "address"
-			}
-		],
-		"name": "setParameters",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
 	}
 ]
-const LaunchpadDealAddress = "0xd30233A60e614273c0f310c2C30439Cc9F1B6688";
 
-const usdtABI = [
+const LaunchpadDealAddress = "0xb4Abf2e9362eE34fE34b5781B3cBBEC8faD5bEC4";
+
+const pTokenABI = [
 	{
-		"constant": true,
 		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"name": "balances",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "maximumFee",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "_totalSupply",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "_owner",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"name": "balance",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"name": "",
-				"type": "address"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "_to",
-				"type": "address"
-			},
-			{
-				"name": "_value",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [],
-		"payable": false,
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "basisPointsRate",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": false,
-		"inputs": [
-			{
-				"name": "newOwner",
-				"type": "address"
-			}
-		],
-		"name": "transferOwnership",
-		"outputs": [],
-		"payable": false,
-		"stateMutability": "nonpayable",
-		"type": "function"
+		"type": "constructor"
 	},
 	{
 		"anonymous": false,
 		"inputs": [
 			{
 				"indexed": true,
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"indexed": true,
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"indexed": false,
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"name": "Approval",
+		"type": "event"
+	},
+	{
+		"anonymous": false,
+		"inputs": [
+			{
+				"indexed": true,
+				"internalType": "address",
 				"name": "from",
 				"type": "address"
 			},
 			{
 				"indexed": true,
+				"internalType": "address",
 				"name": "to",
 				"type": "address"
 			},
 			{
 				"indexed": false,
+				"internalType": "uint256",
 				"name": "value",
 				"type": "uint256"
 			}
 		],
 		"name": "Transfer",
 		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "approve",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "account",
+				"type": "address"
+			}
+		],
+		"name": "balanceOf",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "subtractedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "decreaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "addedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "increaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "name",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "symbol",
+		"outputs": [
+			{
+				"internalType": "string",
+				"name": "",
+				"type": "string"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "totalSupply",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transfer",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "sender",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "recipient",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "transferFrom",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	}
 ]
 
-const mmEnable = document.getElementById("mm-Connect");
+const mmEnable = document.getElementById("mm-connect");
 
 mmEnable.onclick = async () => {
 	await ethereum.request({ method: "eth_requestAccounts" });
-	var mmCurrentAccount = document.getElementById("mm-current-account");
+	let mmCurrentAccount = document.getElementById("mm-connect-wrapper");
+	let mmPayButton = document.getElementById("pay");
+	let mmAuthorizeButton = document.getElementById("authorize");
   mmCurrentAccount.innerHTML = 
-    "Connected with address: " + ethereum.selectedAddress;
+    "Connected with address:<br /> " + truncate( ethereum.selectedAddress, 9 );
+	mmCurrentAccount.classList.add("small");
+	mmPayButton.classList.remove("is-disabled");
+	mmAuthorizeButton.classList.remove("is-disabled");
 }
 
 const pay = document.getElementById("pay");
@@ -450,34 +606,48 @@ var amount;
 window.addEventListener("load", function() {
   document.getElementById('payment').addEventListener("submit", function(e) {
     e.preventDefault(); // before the code
-    
-		amount = document.getElementById("pay"); // potem robie sobie co chce z ta zmienna?
-
-    // Should be triggered on form submit
-    console.log('hi');
   })
 });
 
-// pay.onclick = async () => {
-// 	await ethereum.request({ method: "eth_requestAccounts" });
 
-// 	var web3 = new Web3(window.ethereum);
+authorize.onclick = async () => {
 
-// 	var usdt = new web3.eth.Contract(usdtABI, "0x110a13FC3efE6A245B50102D2d79B3E76125Ae83");
-// 	var LaunchpadDeal = new web3.eth.Contract(LaunchpadDealABI, LaunchpadDealAddress);
-// 	usdt.setProvider(window.ethereum);
-// 	LaunchpadDeal.setProvider(window.ethereum);
+	await ethereum.request({ method: "eth_requestAccounts" });
 
-// 	await LaunchpadDeal.methods
-// 		.payForDeal(amount)
-// 		.send({
-// 			from: ethereum.selectedAddress,
-// 			value: web3.utils.toBN(amount),
-// 		})
-// 		// .on("receipt", async function (receipt) {
-// 		// 	let betsCount = await betFactory.methods.getBetsCount().call();
+	let web3 = new Web3(window.ethereum);
 
-// 			alert(`Paid successfully!`);
-// 		};
+	let pToken = new web3.eth.Contract( pTokenABI, "0xabeC441aCa68cE757264c89899Ba4820908b801b"); //"0x110a13FC3efE6A245B50102D2d79B3E76125Ae83"
+	
+	pToken.setProvider( window.ethereum );
+
+	let amount = document.getElementById("amount").value
+
+	let amountSTR = amount.toString() + "000000000000000000";
+	
+	await pToken.methods
+		.approve(LaunchpadDealAddress, amountSTR)
+		.send( { from: ethereum.selectedAddress } )
+
+	alert('Approved successfully!')
+}
+
+pay.onclick = async () => {
+
+	await ethereum.request({ method: "eth_requestAccounts" });
+
+	let web3 = new Web3(window.ethereum);
+
+	let LaunchpadDeal = new web3.eth.Contract(LaunchpadDealABI, LaunchpadDealAddress);
+	
+	LaunchpadDeal.setProvider( window.ethereum );
+
+	await LaunchpadDeal.methods
+		.payForDeal( document.getElementById("amount").value )
+		.send( { from: ethereum.selectedAddress } )
+		// .on("receipt", async function (receipt) {
+		// 	let betsCount = await betFactory.methods.getBetsCount().call();
+
+	alert( 'Paid successfully!' );
+};
 
 
