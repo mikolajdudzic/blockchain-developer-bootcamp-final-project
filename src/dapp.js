@@ -53,13 +53,6 @@ const LaunchpadDealABI = [
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "getInvestors",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -104,21 +97,88 @@ const LaunchpadDealABI = [
 		"type": "event"
 	},
 	{
+		"anonymous": false,
 		"inputs": [
 			{
+				"indexed": false,
+				"internalType": "address",
+				"name": "_investor",
+				"type": "address"
+			},
+			{
+				"indexed": false,
 				"internalType": "uint256",
 				"name": "_amount",
 				"type": "uint256"
 			}
 		],
-		"name": "payForDeal",
+		"name": "UserPaid",
+		"type": "event"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "investors",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function",
+		"constant": true
+	},
+	{
+		"inputs": [],
+		"name": "owner",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function",
+		"constant": true
+	},
+	{
+		"inputs": [],
+		"name": "paymentToken",
+		"outputs": [
+			{
+				"internalType": "contract IERC20",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function",
+		"constant": true
+	},
+	{
+		"inputs": [],
+		"name": "renounceOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"inputs": [],
-		"name": "renounceOwnership",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "newOwner",
+				"type": "address"
+			}
+		],
+		"name": "transferOwnership",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -144,11 +204,6 @@ const LaunchpadDealABI = [
 				"internalType": "address",
 				"name": "_pToken",
 				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_tokenDecimals",
-				"type": "uint256"
 			}
 		],
 		"name": "setParameters",
@@ -159,44 +214,26 @@ const LaunchpadDealABI = [
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "newOwner",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "_amount",
+				"type": "uint256"
 			}
 		],
-		"name": "transferOwnership",
+		"name": "payForDeal",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": false,
-				"internalType": "address",
-				"name": "_investor",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "UserPaid",
-		"type": "event"
+		"inputs": [],
+		"name": "getInvestors",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
 	},
 	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_amount",
-				"type": "uint256"
-			}
-		],
-		"name": "formatValue",
+		"inputs": [],
+		"name": "getCurrentPool",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -205,7 +242,8 @@ const LaunchpadDealABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
+		"type": "function",
+		"constant": true
 	},
 	{
 		"inputs": [
@@ -224,20 +262,8 @@ const LaunchpadDealABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getCurrentPool",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
+		"type": "function",
+		"constant": true
 	},
 	{
 		"inputs": [
@@ -256,334 +282,250 @@ const LaunchpadDealABI = [
 			}
 		],
 		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "investors",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "owner",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "paymentToken",
-		"outputs": [
-			{
-				"internalType": "contract IERC20",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
+		"type": "function",
+		"constant": true
 	}
 ]
 
-const LaunchpadDealAddress = "0xb4Abf2e9362eE34fE34b5781B3cBBEC8faD5bEC4";
+const LaunchpadDealAddress = "0x32879279C1d32Ed1f2A19927A610BeC2BF638731";
 
 const pTokenABI = [
 	{
+			"constant": true,
+			"inputs": [],
+			"name": "name",
+			"outputs": [
+					{
+							"name": "",
+							"type": "string"
+					}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+	},
+	{
+			"constant": false,
+			"inputs": [
+					{
+							"name": "_spender",
+							"type": "address"
+					},
+					{
+							"name": "_value",
+							"type": "uint256"
+					}
+			],
+			"name": "approve",
+			"outputs": [
+					{
+							"name": "",
+							"type": "bool"
+					}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+	},
+	{
+			"constant": true,
+			"inputs": [],
+			"name": "totalSupply",
+			"outputs": [
+					{
+							"name": "",
+							"type": "uint256"
+					}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+	},
+	{
+			"constant": false,
+			"inputs": [
+					{
+							"name": "_from",
+							"type": "address"
+					},
+					{
+							"name": "_to",
+							"type": "address"
+					},
+					{
+							"name": "_value",
+							"type": "uint256"
+					}
+			],
+			"name": "transferFrom",
+			"outputs": [
+					{
+							"name": "",
+							"type": "bool"
+					}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+	},
+	{
+			"constant": true,
+			"inputs": [],
+			"name": "decimals",
+			"outputs": [
+					{
+							"name": "",
+							"type": "uint8"
+					}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+	},
+	{
+			"constant": true,
+			"inputs": [
+					{
+							"name": "_owner",
+							"type": "address"
+					}
+			],
+			"name": "balanceOf",
+			"outputs": [
+					{
+							"name": "balance",
+							"type": "uint256"
+					}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+	},
+	{
+			"constant": true,
+			"inputs": [],
+			"name": "symbol",
+			"outputs": [
+					{
+							"name": "",
+							"type": "string"
+					}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+	},
+	{
+			"constant": false,
+			"inputs": [
+					{
+							"name": "_to",
+							"type": "address"
+					},
+					{
+							"name": "_value",
+							"type": "uint256"
+					}
+			],
+			"name": "transfer",
+			"outputs": [
+					{
+							"name": "",
+							"type": "bool"
+					}
+			],
+			"payable": false,
+			"stateMutability": "nonpayable",
+			"type": "function"
+	},
+	{
+			"constant": true,
+			"inputs": [
+					{
+							"name": "_owner",
+							"type": "address"
+					},
+					{
+							"name": "_spender",
+							"type": "address"
+					}
+			],
+			"name": "allowance",
+			"outputs": [
+					{
+							"name": "",
+							"type": "uint256"
+					}
+			],
+			"payable": false,
+			"stateMutability": "view",
+			"type": "function"
+	},
+	{
+			"payable": true,
+			"stateMutability": "payable",
+			"type": "fallback"
+	},
+	{
+			"anonymous": false,
+			"inputs": [
+					{
+							"indexed": true,
+							"name": "owner",
+							"type": "address"
+					},
+					{
+							"indexed": true,
+							"name": "spender",
+							"type": "address"
+					},
+					{
+							"indexed": false,
+							"name": "value",
+							"type": "uint256"
+					}
+			],
+			"name": "Approval",
+			"type": "event"
+	},
+	{
+			"anonymous": false,
+			"inputs": [
+					{
+							"indexed": true,
+							"name": "from",
+							"type": "address"
+					},
+					{
+							"indexed": true,
+							"name": "to",
+							"type": "address"
+					},
+					{
+							"indexed": false,
+							"name": "value",
+							"type": "uint256"
+					}
+			],
+			"name": "Transfer",
+			"type": "event"
+	}
+]
+
+const pTokenAddress = "0xabeC441aCa68cE757264c89899Ba4820908b801b";
+
+const sendTokenABI = [
+	{
 		"inputs": [],
-		"stateMutability": "nonpayable",
-		"type": "constructor"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"indexed": false,
-				"internalType": "uint256",
-				"name": "value",
-				"type": "uint256"
-			}
-		],
-		"name": "Transfer",
-		"type": "event"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			}
-		],
-		"name": "allowance",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "approve",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "account",
-				"type": "address"
-			}
-		],
-		"name": "balanceOf",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "decimals",
-		"outputs": [
-			{
-				"internalType": "uint8",
-				"name": "",
-				"type": "uint8"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "subtractedValue",
-				"type": "uint256"
-			}
-		],
-		"name": "decreaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "spender",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "addedValue",
-				"type": "uint256"
-			}
-		],
-		"name": "increaseAllowance",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "name",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "symbol",
-		"outputs": [
-			{
-				"internalType": "string",
-				"name": "",
-				"type": "string"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "totalSupply",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "recipient",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transfer",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "sender",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "recipient",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "amount",
-				"type": "uint256"
-			}
-		],
-		"name": "transferFrom",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
+		"name": "sendPToken",
+		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	}
 ]
+
+const sendTokenAddress = "0xfDadDb8FcEA3312d2804b6352E7D418426776220";
+
 
 const mmEnable = document.getElementById("mm-connect");
 
@@ -592,14 +534,18 @@ mmEnable.onclick = async () => {
 	let mmCurrentAccount = document.getElementById("mm-connect-wrapper");
 	let mmPayButton = document.getElementById("pay");
 	let mmAuthorizeButton = document.getElementById("authorize");
+	let getToken = document.getElementById("get-token");
   mmCurrentAccount.innerHTML = 
     "Connected with address:<br /> " + truncate( ethereum.selectedAddress, 9 );
 	mmCurrentAccount.classList.add("small");
 	mmPayButton.classList.remove("is-disabled");
 	mmAuthorizeButton.classList.remove("is-disabled");
+	getToken.classList.remove("is-disabled");
+
 }
 
 const pay = document.getElementById("pay");
+const getToken = document.getElementById("get-token");
 
 var amount;
 
@@ -610,13 +556,28 @@ window.addEventListener("load", function() {
 });
 
 
+getToken.onclick = async () => {
+	await ethereum.request({ method: "eth_requestAccounts" });
+
+	let web3 = new Web3(window.ethereum);
+
+	let sendToken = new web3.eth.Contract( sendTokenABI, sendTokenAddress);
+
+	sendToken.setProvider( window.ethereum );
+
+	await sendToken.methods.sendPToken().send( { from: ethereum.selectedAddress } )
+
+	alert("You have received pToken!")
+}
+
+
 authorize.onclick = async () => {
 
 	await ethereum.request({ method: "eth_requestAccounts" });
 
 	let web3 = new Web3(window.ethereum);
 
-	let pToken = new web3.eth.Contract( pTokenABI, "0xabeC441aCa68cE757264c89899Ba4820908b801b"); //"0x110a13FC3efE6A245B50102D2d79B3E76125Ae83"
+	let pToken = new web3.eth.Contract( pTokenABI, pTokenAddress);
 	
 	pToken.setProvider( window.ethereum );
 
@@ -641,8 +602,14 @@ pay.onclick = async () => {
 	
 	LaunchpadDeal.setProvider( window.ethereum );
 
+	let amount = document.getElementById("amount").value
+
+	let amountSTR = amount.toString() + "000000000000000000";
+
+	console.log(amountSTR);
+
 	await LaunchpadDeal.methods
-		.payForDeal( document.getElementById("amount").value )
+		.payForDeal( amountSTR )
 		.send( { from: ethereum.selectedAddress } )
 		// .on("receipt", async function (receipt) {
 		// 	let betsCount = await betFactory.methods.getBetsCount().call();
