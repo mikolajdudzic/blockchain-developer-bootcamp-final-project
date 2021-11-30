@@ -64,7 +64,7 @@ contract LaunchpadDeal is Ownable {
     // Checks whether the amount fits in max limit.
     require(currentPool + formatedAmount <= maxPool, "Try to buy for less money.");
     // Checks if the user provided enough contribution.
-    require(formatedAmount >= minPoolPerUser, "Your payment must be equal or higher than 5 USDT");
+    require(formatedAmount >= minPoolPerUser, "Your payment must be equal or higher than 10 pToken");
     // Makes sure user cant buy more than max limit.
     require(formatedAmount <= maxPoolPerUser, "Your allocation is lower.");
     _;
@@ -90,6 +90,7 @@ contract LaunchpadDeal is Ownable {
     minPoolPerUser = formatValue(_minPoolPerUser);
     paymentToken = IERC20(_pToken);
     tokenDecimals = _tokenDecimals;
+    currentPool = 0;
   }
 
   //@notice function format the value provide by a user to value with 18 zeros to match the solidity format
@@ -133,5 +134,11 @@ contract LaunchpadDeal is Ownable {
   //@notice returns a balance of some ERC20 token on provided address
   function getBalance(address _address) public view returns(uint) {
     return paymentToken.balanceOf(_address);
+  }
+
+
+  //@notice this function is for test purposes only.
+  function getNum(uint256 _amount) external view UserCanPay(_amount) returns(uint) {
+    return _amount;
   }
 }
