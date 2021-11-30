@@ -1,4 +1,5 @@
 const LaunchpadDeal = artifacts.require("LaunchpadDeal");
+const { assert } = require('chai');
 const truffleAssert = require('truffle-assertions');
 const PToken = artifacts.require("PToken");
 
@@ -6,6 +7,8 @@ contract('test', function(accounts){
 	
 	it("Should return a formated value", function(){
 		return LaunchpadDeal.deployed().then(async function(instance){
+			await PToken.new();
+			await instance.setParameters(100, 50, 5, PToken.address, 18);
 			let expected = await instance.formatValue(200);
 			return expected;
 		}).then(function(expected){
@@ -17,11 +20,11 @@ contract('test', function(accounts){
 	it("Balance of checking account should be equal 200 or higher", function() {
 		return LaunchpadDeal.deployed().then(async function(instance){
 			await PToken.new();
-			await instance.setParameters(1000, 10, 5, PToken.address);
+			await instance.setParameters(100, 50, 5, PToken.address, 18);
 			let balance = instance.getBalance.call(accounts[1]);
 			return balance;
 		}).then(function(balance){
-			assert(balance >= 200*10**18, "Balance of pToken is not equal 200 or higher...");
+			assert(balance >= 5*10**18, "Balance of pToken is not equal 200 or higher...");
 		});
 	});
 
@@ -56,6 +59,17 @@ contract('test', function(accounts){
 		truffleAssert.eventEmitted(result, "Transfer", (ev) => {
 			return ev.from.toString() === "0x0000000000000000000000000000000000000000" && 
 			ev.to === accounts[1];
+		});
+	});
+
+	it("Should check if modifier UserCanPay works properly", async () => {
+		return LaunchpadDeal.deployed().then(async function(instance) {
+			await PToken.new();
+			await instance.setParameters(100, 50, 5, PToken.address, 18);
+			let result = await instance.getNum.call(50, {from: accounts[1]});
+			return result;
+		}).then(function(result) {
+				assert.equal(result, 50, "?");
 		});
 	});
 });
