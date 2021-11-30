@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		
+		<meta charset="UTF-8">
+		<meta name="Description" content="My Final Project for Blockchain Developer Bootcamp by ConsenSys.">
+		<meta name="Author" content="MikoÃ…â€šaj Dudzic">
+		<link href="https://unpkg.com/nes.css@2.3.0/css/nes.min.css" rel="stylesheet" />
+		<link href="spinner.css" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+	
+		<style>
+		  html, body, pre, code, kbd, samp {
+			  font-family: "Press Start 2P";
+		  }
+
+		  .right {
+			  float: right;
+			  text-align: right;
+		  }
+
+		  .small {
+			  font-size: 11px;
+		  }
+
+		  #dudzic-token > .container {
+			max-width: 980px;
+			margin: 0 auto;
+			margin-top: 150px;
+		  }
+
+		  .nes-container {
+			  margin-top: 2em;
+		  }
+
+		  .nes-field {
+			  margin-bottom: 1em;
+		  }
+
+		  #mm-connect-wrapper {
+				min-height: 120px;
+			}
+
+		  @media screen and (max-width: 1024px) {
+			#dudzic-token {
+				padding-left: 2em;
+				padding-right: 2em;
+			} 
+
+			#mm-connect-wrapper {
+				display: block;
+				margin-top: 1em;
+				margin-bottom: 1em;
+				float: none;
+				text-align: left;
+			}
+		  }
+
+		  .clearfix::after {
+				content: "";
+				clear: both;
+				display: table;
+			}
+
+			#mm-payment-form {
+				margin-bottom: 3em;
+			}
+
+			#payment-success {
+				text-align: center;
+			}
+
+			#payment-success iframe {
+				display: inline-block;
+			}
+
+			#contract-address {
+				text-align: center;
+			}
+
+			.hidden {
+				display: none;
+			}
+			
+			dialog {
+				text-align: center;
+			}
+
+			dialog menu {
+				margin: 0;
+				padding-inline-start: 0;
+			}
+
+			#ptoken-balance {
+				display: block;
+				margin-top: 1em;
+			}
+
+			#mm-button-wrapper {
+				display: block;
+			}
+
+		</style>
+
+		<title>RopstenPad</title>
+		<script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+	</head>
+	<body>
+		
+		<div id="dudzic-token">
+			<div class="container">
+				<div id="mm-detected"></div>
+					<h1>RopstenPad!</h1>
+	
+						<div id="mm-connect-wrapper" class="nes-field right">
+							<span id="mm-button-wrapper">
+								<button type="submit" id="mm-connect" class="nes-btn is-primary">Connect to MetaMask</button>
+							</span>
+							<span id="ptoken-balance" class="nes-text hidden right small"></span>
+						</div>
+					
+						<span class="clearfix"></span>
+		
+						<h2>Buy Dudzic Token!</h2>
+		
+				<section id="mm-payment-form" class="nes-container with-title">
+					<h3 class="title">We accept payments only in pToken</h3>
+					<form id="payment">
+						<div id="amount-input" class="nes-field hidden">
+							<h4>1 pToken = 1 DUD</h4>
+							<label type="number" for="amount">Please provide 50 - 150 pTokens</label>
+							<input type="number" id="amount" class="nes-input">
+						</div>
+						<button id="get-token" class="nes-btn is-disabled">Get pToken</button>
+						<button id="authorize" class="nes-btn is-disabled">Authorize</button>
+						<button id="pay" class="nes-btn is-disabled" onclick="">Pay</button>
+					</form>
+				</section>
+				<span id="spinner" class="hidden"></span>
+				<div id="payment-success" class="hidden"><iframe src="https://giphy.com/embed/a0h7sAqON67nO" width="480" height="270" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/borat-great-success-a0h7sAqON67nO"></a></p></div>
+				<div id="contract-address" class="hidden">DUD contract address: 0x23945a51C9045A622C0797575Cf1E480676eE79e</div>
+
+			</div>
+		</div>
+
+
+		<script src="dapp.js"></script>
+	</body>
+	<!-- pToken received dialog -->
+	<section>
+		<dialog class="nes-dialog is-rounded" id="ptoken-received">
+		<form method="dialog">
+			<p class="title">Success</p>
+			<p>You have received pTokens!</p>
+			<menu class="dialog-menu">
+				<button class="nes-btn is-primary">Close</button>
+			</menu>
+		</form>
+		</dialog>
+	</section>
+
+	<!-- Authorization successful -->
+	<section>
+		<dialog class="nes-dialog is-rounded" id="auth-success">
+		<form method="dialog">
+			<p class="title">Success</p>
+			<p>You have successfully authorized the amount</p>
+			<menu class="dialog-menu">
+				<button class="nes-btn is-primary">Close</button>
+			</menu>
+		</form>
+		</dialog>
+	</section>
+
+	<!-- Payment successful -->
+	<section>
+		<dialog class="nes-dialog is-rounded" id="pay-success">
+		<form method="dialog">
+			<p class="title">Success</p>
+			<p>Payment successful. DUD tokens are on your wallet know</p>
+			<menu class="dialog-menu">
+				<button class="nes-btn is-primary">Close</button>
+			</menu>
+		</form>
+		</dialog>
+	</section>
+
+</html>
