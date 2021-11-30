@@ -1,0 +1,10 @@
+Ropsten LaunchpadDeal contract address: ->> **0xF3be1424Ed8ffdb457a3D0E3DeE8EF4577724a19**
+
+
+Ropsten sendToken contract address: ->> **0xfDadDb8FcEA3312d2804b6352E7D418426776220**
+
+
+Ropsten pToken contract address ->> **0xabeC441aCa68cE757264c89899Ba4820908b801b**
+
+
+Ropsten Dudzic Token contract address ->> **0x23945a51C9045A622C0797575Cf1E480676eE79e**
