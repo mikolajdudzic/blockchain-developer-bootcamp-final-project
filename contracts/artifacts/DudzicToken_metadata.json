@@ -61,19 +61,6 @@
 				"type": "event"
 			},
 			{
-				"inputs": [],
-				"name": "MINTER_ROLE",
-				"outputs": [
-					{
-						"internalType": "bytes32",
-						"name": "",
-						"type": "bytes32"
-					}
-				],
-				"stateMutability": "view",
-				"type": "function"
-			},
-			{
 				"inputs": [
 					{
 						"internalType": "address",
@@ -388,11 +375,11 @@
 			]
 		},
 		"contracts/DudzicToken.sol": {
-			"keccak256": "0x1817f9595f60d9c24197e5d922731809d800bec109c5952f23bbbdee0ac9d0b9",
+			"keccak256": "0xd24ad0de3147e248c9b880f05392ac185cfa0407e3815e890373d4fcce9d8eef",
 			"license": "UNLICENSED",
 			"urls": [
-				"bzz-raw://233aeb07be8b10c1191a8ef8d409bd145a1a473f260b0de9827bbff434b169a8",
-				"dweb:/ipfs/QmUUMQY6p19ePLerPfVrjzkiPmBytTS1QaAYrarKGSiafi"
+				"bzz-raw://4981ca70383fa79878103534a75fc86a6de05b567ad807d35e8e20b269b4981a",
+				"dweb:/ipfs/QmPhgLGDdmGtoDBJveJhhfmn81qq5EM6yT5E46MXefdRzJ"
 			]
 		}
 	},
