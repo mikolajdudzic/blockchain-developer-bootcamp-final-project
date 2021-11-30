@@ -4,18 +4,6 @@ const truffleAssert = require('truffle-assertions');
 const PToken = artifacts.require("PToken");
 
 contract('test', function(accounts){
-	
-	it("Should return a formated value", function(){
-		return LaunchpadDeal.deployed().then(async function(instance){
-			await PToken.new();
-			await instance.setParameters(100, 50, 5, PToken.address, 18);
-			let expected = await instance.formatValue(200);
-			return expected;
-		}).then(function(expected){
-			assert.equal(expected, 200000000000000000000, "Value is not like the expected one.");
-		});
-	});	
-
 
 	it("Balance of checking account should be equal 200 or higher", function() {
 		return LaunchpadDeal.deployed().then(async function(instance){
